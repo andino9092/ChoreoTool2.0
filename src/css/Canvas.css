@@ -2,6 +2,7 @@
     position: relative;
 }
 
+/* Performer and Spawner CSS */
 
 .person{
     position: absolute;
@@ -9,4 +10,15 @@
     border-radius: 50%;
     width: 20px;
     height: 20px;
+    display: flex;
+    justify-content: center;
+    
 }
+
+.spawner{
+    display: flex;
+    padding: 10px;
+    justify-content: center;
+    align-items: center;
+}
+

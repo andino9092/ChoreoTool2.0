@@ -1,6 +1,6 @@
 import { Layer, Stage, Shape } from 'react-konva';
 
-import Person from './Person';
+
 
 import './css/Canvas.css'
 
@@ -47,9 +47,6 @@ export default function Canvas(props){
                     }}
                     stroke="#686363"
                     />
-                </Layer>
-                <Layer>
-                    <Person/>
                 </Layer>
             </Stage>
         </div>
