@@ -1,9 +1,8 @@
-import { useState, useEffect, createRef, useRef} from 'react';
+import { useState, useEffect, useRef} from 'react';
 
 import Canvas from './Canvas';
 import Performers from './Performer';
 import Spawner from './Spawner';
-import gsap from 'gsap';
 
 import './css/App.css';
 
@@ -14,10 +13,12 @@ function App() {
   const [performers, setPerformers] = useState([]);
   const [formations, setFormations] = useState([[]]);
   const [currPage, setCurrPage] = useState(0);
+  const [nameField, setNameField] = useState("");
+  const [focus, setFocus] = useState(0);
 
   const prevCoords = useRef(null);
 
-  const refs = useRef([]);
+  // const refs = useRef([]);
 
   const spawner = (id, x, y) => {
     setPerformers([...performers, {
@@ -25,17 +26,16 @@ function App() {
       valid: true,
       x: x,
       y: y,
+      name: id,
     }]);
-    refs.current=[...refs.current, createRef()];
+    // refs.current=[...refs.current, createRef()];
+  }
+
+  const focusPerson = (id) => {
+    setFocus(id);
   }
 
   const update = (id, x, y) => {
-    // for (var i = 0; i < performers.length; i++){
-    //   gsap.from(refs.current[i].current, {
-    //     x: 100,
-    //     duration: 1
-    //   })
-    // }
     setPerformers(performers.map((a) => a.id === id ? {id: id, valid: true, x: x, y: y} : a));
   }
 
@@ -73,17 +73,21 @@ function App() {
     setCurrPage(currPage + 1);
   }
 
-  useEffect(() => {
-    console.log(refs);
-  }, [performers])
+  const handleField = (e) => {
+    setNameField(e.target.value);
+  }
 
   useEffect(() => {
-    console.log("Performers: ", performers);
-  }, [formations, performers, currPage])
+    // console.log("Performers: ", performers);
+    // console.log("Formations: ", formations);
+    console.log("Name: ", nameField);
+    console.log("Focus: ", focus)
+  }, [formations, performers, currPage, nameField, focus])
   
   useEffect(() => {
+    // Sets previous locations
     prevCoords.current = performers;
-  }, [currPage])
+  }, [currPage, performers])
 
   return (
     <div className='app'>
@@ -98,9 +102,17 @@ function App() {
         <button onClick={handleNext} disabled={currPage + 1 >= formations.length}>
           NextPage
         </button>
+        <input type="text" onChange={handleField} value={nameField}/>
         <div className='spawner'>
           <Spawner spawner={spawner}/>
-          <Performers currCoords={performers} currPage={currPage} prevCoords={prevCoords.current} refs={refs} update={update}/>
+          <Performers 
+            currCoords={performers} 
+            currPage={currPage} 
+            prevCoords={prevCoords.current} 
+            // refs={refs} 
+            focus={focus}
+            update={update} 
+            focusPerson={focusPerson}/>
         </div>
       </div>
     </div>

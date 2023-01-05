@@ -12,7 +12,10 @@
     height: 20px;
     display: flex;
     justify-content: center;
-    
+}
+
+.focus{
+    background-color: blue;
 }
 
 .spawner{

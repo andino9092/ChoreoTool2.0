@@ -5,28 +5,32 @@ import gsap from "gsap";
 const Person = forwardRef((props, ref) => {
 
     /**
-     * update function updates state in App so everything is rerendered and the animation happens again
+     * When dragging, it transitions from the original position which shouldn't be happening.
+     * If I use coords state to move from, there is no animation since it will always be equal to coords
+     * 
+     * If I use isDraggin state to determine when to do the animation it won't work since props.coords
+     * is being update. That's why it keeps on starting from where it previously was.
+     * 
      * 
      */
-    const [coords, setCoords] = useState([props.coords[0], props.coords[1]]);
+
+    const [status, setStatus] = useState(false);
+
     
     const tempRef = createRef();
 
     const onStop = (e, ui) => {
-        // props.update(props.id, ui.x, ui.y);
+        props.update(props.id, ui.x, ui.y);
     }
 
-    const onDrag = (e, ui) => {
-        setCoords([ui.x, ui.y]);
+    const handleClick = () => {
+        console.log(props.id)
+        setStatus(true);
+        props.focusPerson(props.id);
     }
-
-    useEffect(() => {
-        console.log(coords);
-    })
-    
     
     useEffect(() => {
-        console.log(props.prevCoords);
+        // console.log(props.id);
         if (props.prevCoords){
             gsap.from(tempRef.current, {
                 x: props.prevCoords[0],
@@ -34,17 +38,20 @@ const Person = forwardRef((props, ref) => {
                 duration: .5,
             })
         }
-    }, [props.currPage])
+    })
 
     return (
         <div>
             <Draggable 
                 bounds={{top: -620, bottom: 0, left: -500, right: 500}}
                 onStop={onStop}
-                onDrag={onDrag}
-                defaultPosition={{x: coords[0], y: coords[1]}}
+                defaultPosition={{x: props.coords[0], y: props.coords[1]}}
+                // onClick={handleClick}
                 >
-                    <div className="person" ref={tempRef}/>
+                    <div className={`person${status? "focus":""}`}  
+                    onClick={handleClick}
+                    ref={tempRef}
+                    />
             </Draggable>
         </div>
     )
