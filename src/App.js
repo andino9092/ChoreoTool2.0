@@ -1,9 +1,9 @@
-import { useState, useEffect, createRef} from 'react';
+import { useState, useEffect, createRef, useRef} from 'react';
 
 import Canvas from './Canvas';
 import Performers from './Performer';
 import Spawner from './Spawner';
-// import gsap from 'gsap';
+import gsap from 'gsap';
 
 import './css/App.css';
 
@@ -15,18 +15,28 @@ function App() {
   const [formations, setFormations] = useState([[]]);
   const [currPage, setCurrPage] = useState(0);
 
+  const prevCoords = useRef(null);
+
+  const refs = useRef([]);
+
   const spawner = (id, x, y) => {
     setPerformers([...performers, {
       id: id,
+      valid: true,
       x: x,
       y: y,
-      ref: createRef(),
     }]);
+    refs.current=[...refs.current, createRef()];
   }
 
   const update = (id, x, y) => {
-    setPerformers(performers.map((a) => a.id === id ? {id: id, x: x, y: y, ref: a.ref} : a));
-
+    // for (var i = 0; i < performers.length; i++){
+    //   gsap.from(refs.current[i].current, {
+    //     x: 100,
+    //     duration: 1
+    //   })
+    // }
+    setPerformers(performers.map((a) => a.id === id ? {id: id, valid: true, x: x, y: y} : a));
   }
 
   // const del = (id) => {
@@ -37,7 +47,7 @@ function App() {
     setCurrPage(currPage + 1);
     console.log(formations.length);
     if (currPage === 0 && formations.length === 1){
-      setFormations([performers, []]);
+      setFormations([performers, performers]);
     }
     else if (currPage + 1 === formations.length){
       setFormations([...formations, performers])
@@ -64,31 +74,33 @@ function App() {
   }
 
   useEffect(() => {
-    console.log(performers);
+    console.log(refs);
   }, [performers])
 
   useEffect(() => {
-    console.log(formations);
-    console.log(currPage);
-    console.log(formations[currPage]);
-  }, [formations, currPage])
+    console.log("Performers: ", performers);
+  }, [formations, performers, currPage])
+  
+  useEffect(() => {
+    prevCoords.current = performers;
+  }, [currPage])
 
   return (
     <div className='app'>
       <div className='stage'>
         <Canvas/>
-        <button onClick={handlePrev}>
+        <button onClick={handlePrev} disabled={currPage - 1 < 0}>
           PrevPage
         </button>
         <button onClick={handleCreate}>
           AddPage
         </button>
-        <button onClick={handleNext}>
+        <button onClick={handleNext} disabled={currPage + 1 >= formations.length}>
           NextPage
         </button>
         <div className='spawner'>
           <Spawner spawner={spawner}/>
-          <Performers performers={performers} update={update}/>
+          <Performers currCoords={performers} currPage={currPage} prevCoords={prevCoords.current} refs={refs} update={update}/>
         </div>
       </div>
     </div>
