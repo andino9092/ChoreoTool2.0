@@ -26,7 +26,6 @@ function App() {
 
   const update = (id, x, y) => {
     setPerformers(performers.map((a) => a.id === id ? {id: id, x: x, y: y, ref: a.ref} : a));
-
   }
 
   // const del = (id) => {
@@ -71,6 +70,7 @@ function App() {
     console.log(formations);
     console.log(currPage);
     console.log(formations[currPage]);
+    console.log(performers);
   }, [formations, currPage])
 
   return (
